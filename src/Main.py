@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from Parser import Parser
 
 
 def parse_arguments():
@@ -26,7 +27,9 @@ def validate(input):
 def main():
     input_file = parse_arguments()
     if validate(input_file):
-        print('success!')
+        parser = Parser(input_file)
+        parser.parse()
+        print(parser.commands)
 
 
 if __name__ == "__main__":
