@@ -1,0 +1,19 @@
+{
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.linting.pep8Enabled": true,
+  "python.linting.pycodestyleEnabled": false,
+  "python.linting.pylintPath": "/home/vinicius/venv/bin/pylint",
+  "python.pythonPath": "/home/vinicius/venv/bin/python3",
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    ".vscode": true,
+    "**/*.pyc": true,
+    "**/__pycache__/": true
+  }
+}
