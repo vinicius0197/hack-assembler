@@ -2,18 +2,28 @@ import os
 
 
 class Code:
+    '''
+    This module receives the parsed source file and a symbol table and iterates
+    the parsed source file twice.
+
+    During the first iteration, the symbol table is updated with label declarations.
+
+    During the second iteration, machine code is generated from the parsed instructions
+    and labels and variables are substituted by their respective memory locations.
+    '''
+
     def __init__(self, parser, symbol_table):
         self.parser = parser
         self.symbol_table = symbol_table
         self.n = 16
 
     def assemble(self):
-        self.__build_symbol_table()
+        self.__build_symbol_table()  # First pass
         output_file_name = os.path.splitext(os.path.normpath(
             self.parser.src).split(os.path.sep)[-1])[0] + '.hack'
         f = open(output_file_name, 'w')
 
-        for command in self.parser.commands:
+        for command in self.parser.commands:  # Second pass
             if command['type'] == 'A_COMMAND':
                 if self.__is_int(command['addr']):
                     output = '0' + '{0:015b}'.format(int(command['addr']))
@@ -37,6 +47,9 @@ class Code:
         f.close()
 
     def __is_int(self, value):
+        '''
+        Returns true if value is int
+        '''
         try:
             int(value)
             return True
@@ -44,12 +57,18 @@ class Code:
             return False
 
     def __build_symbol_table(self):
+        '''
+        Adds label declarations to symbol table
+        '''
         for command in self.parser.commands:
             if command['type'] == 'L_COMMAND':
                 self.symbol_table.add_entry(
                     command['addr'], command['line'])
 
     def __get_dest(self, dest):
+        '''
+        Get destination field from parsed command
+        '''
         if dest == '':
             return '000'
         elif dest == 'M':
@@ -68,6 +87,9 @@ class Code:
             return '111'
 
     def __get_comp(self, comp):
+        '''
+        Gets computation field from parsed command
+        '''
         if comp == '0':
             return '0101010'
         elif comp == '1':
@@ -126,6 +148,9 @@ class Code:
             return '1010101'
 
     def __get_jump(self, jump):
+        '''
+        Gets jump field from parsed command
+        '''
         if jump == '':
             return '000'
         elif jump == 'JGT':

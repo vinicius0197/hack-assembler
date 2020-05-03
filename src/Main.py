@@ -15,6 +15,9 @@ def parse_arguments():
 
 
 def validate(input):
+    '''
+    Validates input .asm file
+    '''
     file = Path(input)
     if file.is_file():
         if input.endswith('.asm'):
@@ -32,7 +35,6 @@ def main():
         symbol_table = SymbolTable()
         parser = Parser(input_file)
         parser.parse()
-        # print(parser.commands)
         code = Code(parser, symbol_table)
         code.assemble()
 
