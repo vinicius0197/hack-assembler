@@ -2,6 +2,7 @@ class Parser:
     def __init__(self, src):
         self.src = src
         self.commands = []
+        self.lines = 0
 
     def parse(self):
         lines = self.__read_file()
@@ -12,11 +13,16 @@ class Parser:
                 command['type'] = self.__command_type(line.strip())
                 if command['type'] == 'A_COMMAND':
                     command['addr'] = self.symbol(line.strip())
+                    command['line'] = self.lines
+                    self.lines += 1
                 elif command['type'] == 'C_COMMAND':
                     command['dest'], command['comp'], command['jump'] = self.__parse_c_command(
                         line.strip())
+                    command['line'] = self.lines
+                    self.lines += 1
                 elif command['type'] == 'L_COMMAND':
                     command['addr'] = self.__get_label(line.strip())
+                    command['line'] = self.lines
 
                 self.commands.append(command)
 

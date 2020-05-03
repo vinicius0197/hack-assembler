@@ -32,6 +32,7 @@ def main():
         symbol_table = SymbolTable()
         parser = Parser(input_file)
         parser.parse()
+        # print(parser.commands)
         code = Code(parser, symbol_table)
         code.assemble()
 

@@ -29,7 +29,11 @@ class Code:
             elif command['type'] == 'C_COMMAND':
                 output = '111' + self.__get_comp(command['comp']) + self.__get_dest(
                     command['dest']) + self.__get_jump(command['jump'])
-            f.write(output + '\n')
+            elif command['type'] == 'L_COMMAND':
+                output = ''
+
+            if output:
+                f.write(output + '\n')
         f.close()
 
     def __is_int(self, value):
@@ -40,10 +44,10 @@ class Code:
             return False
 
     def __build_symbol_table(self):
-        for addr, command in enumerate(self.parser.commands):
+        for command in self.parser.commands:
             if command['type'] == 'L_COMMAND':
                 self.symbol_table.add_entry(
-                    command['addr'], addr+1)
+                    command['addr'], command['line'])
 
     def __get_dest(self, dest):
         if dest == '':
@@ -103,7 +107,7 @@ class Code:
         elif comp == 'M':
             return '1110000'
         elif comp == '!M':
-            return '1001101'
+            return '1110001'
         elif comp == '-M':
             return '1110011'
         elif comp == 'M+1':
