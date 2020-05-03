@@ -1,6 +1,22 @@
+import os
+
+
 class Code:
-    def __init__(self, commands):
-        self.commands = commands
+    def __init__(self, parser):
+        self.parser = parser
+
+    def assemble(self):
+        output_file_name = os.path.splitext(os.path.normpath(
+            self.parser.src).split(os.path.sep)[-1])[0] + '.hack'
+        f = open(output_file_name, 'w')
+        for command in self.parser.commands:
+            if command['type'] == 'A_COMMAND':
+                output = '0' + '{0:015b}'.format(int(command['addr']))
+            elif command['type'] == 'C_COMMAND':
+                output = '111' + self.__get_comp(command['comp']) + self.__get_dest(
+                    command['dest']) + self.__get_jump(command['jump'])
+            f.write(output + '\n')
+        f.close()
 
     def __get_dest(self, dest):
         if dest == '':

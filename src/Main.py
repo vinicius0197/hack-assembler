@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 from Parser import Parser
+from Code import Code
 
 
 def parse_arguments():
@@ -29,7 +30,8 @@ def main():
     if validate(input_file):
         parser = Parser(input_file)
         parser.parse()
-        print(parser.commands)
+        code = Code(parser)
+        code.assemble()
 
 
 if __name__ == "__main__":
