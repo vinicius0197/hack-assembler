@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 from Parser import Parser
 from Code import Code
+from SymbolTable import SymbolTable
 
 
 def parse_arguments():
@@ -28,9 +29,10 @@ def validate(input):
 def main():
     input_file = parse_arguments()
     if validate(input_file):
+        symbol_table = SymbolTable()
         parser = Parser(input_file)
         parser.parse()
-        code = Code(parser)
+        code = Code(parser, symbol_table)
         code.assemble()
 
 

@@ -11,12 +11,21 @@ class Parser:
                 command = dict()
                 command['type'] = self.__command_type(line.strip())
                 if command['type'] == 'A_COMMAND':
-                    command['addr'] = self.__get_addr(line.strip())
+                    command['addr'] = self.symbol(line.strip())
                 elif command['type'] == 'C_COMMAND':
                     command['dest'], command['comp'], command['jump'] = self.__parse_c_command(
                         line.strip())
+                elif command['type'] == 'L_COMMAND':
+                    command['addr'] = self.__get_label(line.strip())
 
                 self.commands.append(command)
+
+    def symbol(self, command):
+        head, sep, symbol = command.partition('@')
+        return symbol
+
+    def __get_label(self, command):
+        return command[command.find("(")+1:command.find(")")]
 
     def __read_file(self):
         f = open(self.src, "r")
@@ -35,11 +44,12 @@ class Parser:
         else:
             return 'C_COMMAND'
 
-    def __get_addr(self, command):
-        head, sep, addr = command.partition('@')
-        return addr
-
     def __parse_c_command(self, command):
         dest, equal_sep, tail = command.partition('=')
-        comp, sep, jump = tail.partition(';')
-        return dest, comp, jump
+        if tail:
+            comp, sep, jump = tail.partition(';')
+            return dest, comp, jump
+        else:
+            comp, sep, jump = dest.partition(';')
+            dest = ''
+            return dest, comp, jump

@@ -2,21 +2,48 @@ import os
 
 
 class Code:
-    def __init__(self, parser):
+    def __init__(self, parser, symbol_table):
         self.parser = parser
+        self.symbol_table = symbol_table
+        self.n = 16
 
     def assemble(self):
+        self.__build_symbol_table()
         output_file_name = os.path.splitext(os.path.normpath(
             self.parser.src).split(os.path.sep)[-1])[0] + '.hack'
         f = open(output_file_name, 'w')
+
         for command in self.parser.commands:
             if command['type'] == 'A_COMMAND':
-                output = '0' + '{0:015b}'.format(int(command['addr']))
+                if self.__is_int(command['addr']):
+                    output = '0' + '{0:015b}'.format(int(command['addr']))
+                elif command['addr'] in self.symbol_table.symbol_table:
+                    symbol = command['addr']
+                    output = '0' + \
+                        '{0:015b}'.format(
+                            self.symbol_table.symbol_table[symbol])
+                else:
+                    self.symbol_table.add_entry(command['addr'], self.n)
+                    output = '0' + '{0:015b}'.format(self.n)
+                    self.n += 1
             elif command['type'] == 'C_COMMAND':
                 output = '111' + self.__get_comp(command['comp']) + self.__get_dest(
                     command['dest']) + self.__get_jump(command['jump'])
             f.write(output + '\n')
         f.close()
+
+    def __is_int(self, value):
+        try:
+            int(value)
+            return True
+        except ValueError:
+            return False
+
+    def __build_symbol_table(self):
+        for addr, command in enumerate(self.parser.commands):
+            if command['type'] == 'L_COMMAND':
+                self.symbol_table.add_entry(
+                    command['addr'], addr+1)
 
     def __get_dest(self, dest):
         if dest == '':
